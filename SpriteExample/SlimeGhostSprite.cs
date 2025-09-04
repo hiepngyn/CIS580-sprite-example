@@ -19,6 +19,8 @@ namespace SpriteExample
 
         private Texture2D texture;
 
+        private bool flipped;
+
         private Vector2 position = new Vector2(200, 200);
 
         /// <summary>
@@ -41,12 +43,20 @@ namespace SpriteExample
 
             // Apply the gamepad movement with inverted Y axis
             position += gamePadState.ThumbSticks.Left * new Vector2(1, -1);
-
+            if (gamePadState.ThumbSticks.Left.X < 0) flipped = true;
+            if (gamePadState.ThumbSticks.Left.X > 0) flipped = false;
             // Apply keyboard movement
             if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W)) position += new Vector2(0, -1);
             if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S)) position += new Vector2(0, 1);
-            if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A)) position += new Vector2(-1, 0);
-            if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D)) position += new Vector2(1, 0);
+            if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
+            {
+                position += new Vector2(-1, 0);
+                flipped = true;
+            }
+            if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D)){ 
+                position += new Vector2(1, 0);
+                flipped = false;
+            }
         }            
 
         /// <summary>
@@ -56,7 +66,8 @@ namespace SpriteExample
         /// <param name="spriteBatch">The spritebatch to render with</param>
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, Color.White);
+            SpriteEffects spriteEffects = (flipped) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            spriteBatch.Draw(texture, position, null, Color.White, 0.33f, new Vector2(64,64), 0.5f, spriteEffects, 0);
         }
     }
 }
